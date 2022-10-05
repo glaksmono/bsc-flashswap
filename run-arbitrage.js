@@ -9,7 +9,7 @@ const { mainnet: addresses } = require("./addresses");
 const Flashloan = require("./build/contracts/FlashSwap.json");
 
 const web3 = new Web3(
-  new Web3.providers.WebsocketProvider(process.env.WSS_URL)
+  new Web3.providers.WebsocketProvider(process.env.QUICKNODE_WSS_PROVIDER)
 );
 const { address: admin } = web3.eth.accounts.wallet.add(
   process.env.PRIVATE_KEY
@@ -31,7 +31,9 @@ const PancakeSwap = new web3.eth.Contract(
 );
 
 const init = async () => {
-  const networkId = await web3.eth.net.getId();
+  const networkId = 97;
+  console.log("---- network id ------");
+  console.log(networkId);
   //*************** To run code without having contract deployed   Comment out line 9 and 33 to 37   *************************
   const flashloan = new web3.eth.Contract(
     Flashloan.abi,

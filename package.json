@@ -1,5 +1,6 @@
 {
-  "name": "28-deploy-flashloan-smart-contract",
+  "name": "bsc-flashswap",
+  "version": "1.0.1",
   "description": "",
   "main": "run-arbitrage.js",
   "scripts": {
@@ -8,8 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "web3": "^1.5.2",
-    "dotenv": "^10.0.0",
-    "@truffle/hdwallet-provider": "^2.0.0"
+    "@truffle/hdwallet-provider": "^2.0.17",
+    "dotenv": "^16.0.1",
+    "web3": "^1.7.5"
+  },
+  "engines": {
+    "node": "16.14.2"
   }
 }

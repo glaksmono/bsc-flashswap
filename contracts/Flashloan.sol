@@ -1,9 +1,6 @@
-pragma solidity =0.6.6;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.17;
 pragma experimental ABIEncoderV2;
-
-
-
-
 
 import './utils/SafeMath.sol';
 import './UniswapV2Library.sol';
@@ -14,7 +11,6 @@ import './interfaces/IUniswapV2Router01.sol';
 import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IWETH.sol'; 
 
-
 contract FlashSwap {
     IWETH immutable WETH;
     address Beneficiary;
@@ -22,7 +18,8 @@ contract FlashSwap {
     address PancakeFactory;
     address PancakeRouter;
     address ApeRouter;
-    constructor(address pancakeFactory, address apeFactory, address wethAddress , address apeRouter, address pancakeRouter, address beneficiaryAddress) public {
+
+    constructor(address pancakeFactory, address apeFactory, address wethAddress , address apeRouter, address pancakeRouter, address beneficiaryAddress) {
          ApeSwapFactory = apeFactory;
          PancakeFactory = pancakeFactory;
          WETH = IWETH(wethAddress);
@@ -31,25 +28,23 @@ contract FlashSwap {
          ApeRouter = apeRouter; 
     }
     
-    
     function startArbitrage(
-    address token0,
-    address token1,
-    uint amount0, 
-    uint amount1,
-    address startFactory,
-    address endRouterAddress,
-    uint repay
-  ) external {
-  
-    address pairAddress =   IUniswapV2Factory(startFactory).getPair(token0, token1);
-    require(pairAddress != address(0), 'This pool does not exist');
-    IUniswapV2Pair(pairAddress).swap(
-      amount0, 
-      amount1, 
-      address(this), 
-      abi.encode(endRouterAddress, repay) //not empty bytes param will trigger flashloan
-    );
+      address token0,
+      address token1,
+      uint amount0, 
+      uint amount1,
+      address startFactory,
+      address endRouterAddress,
+      uint repay
+    ) external {  
+      address pairAddress =   IUniswapV2Factory(startFactory).getPair(token0, token1);
+      require(pairAddress != address(0), 'This pool does not exist');
+      IUniswapV2Pair(pairAddress).swap(
+        amount0, 
+        amount1, 
+        address(this), 
+        abi.encode(endRouterAddress, repay) //not empty bytes param will trigger flashloan
+      );
   }
     
     receive() external payable {}
@@ -76,7 +71,7 @@ contract FlashSwap {
 
         if (amountToken > 0) {
             token.approve(endRouter, amountToken);
-            uint[] memory amountReceived = IUniswapV2Router02(endRouter).swapExactTokensForETH(amountToken, 0, path,address(this),now);
+            uint[] memory amountReceived = IUniswapV2Router02(endRouter).swapExactTokensForETH(amountToken, 0, path,address(this), block.timestamp);
             require(amountReceived[1] > repay, "Failed to get enough from swap to repay"); 
             WETH.deposit{value: amountReceived[1]}();
             WETH.transfer(msg.sender, repay);
@@ -85,7 +80,7 @@ contract FlashSwap {
               }
         } else {
             WETH.withdraw(amountEth);
-            uint [] memory amountReceived = IUniswapV2Router02(endRouter).swapExactETHForTokens{value: address(this).balance}(0, path, address(this), now);
+            uint [] memory amountReceived = IUniswapV2Router02(endRouter).swapExactETHForTokens{value: address(this).balance}(0, path, address(this), block.timestamp);
             require(amountReceived[1] > repay, "Failed to get enough from swap to repay"); // fail if we didn't get enough tokens back to repay our flash loan
             token.transfer(msg.sender, repay); // return tokens to V2 pair
             if(amountReceived[1] - repay > 0) {

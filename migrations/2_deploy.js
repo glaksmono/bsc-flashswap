@@ -7,7 +7,7 @@ module.exports = function (deployer) {
     "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6", //apefactory
     "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", //WBNB Token  BSC's Weth
     "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7", //aperouter
-    "0x10ED43C718714eb63d5aA57B78B54704E256024E" //pancakerouter
-    " 0xYOURADDRESSHERE"// Beneficiary  Needs to be filled by you with deployment address
+    "0x10ED43C718714eb63d5aA57B78B54704E256024E", //pancakerouter
+    "0x752A2a596BD9470d0F3E2eFF0cD8861fa996615A"  // Beneficiary  Needs to be filled by you with deployment address
   );
 };
